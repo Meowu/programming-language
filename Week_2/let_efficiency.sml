@@ -21,5 +21,5 @@ fun good_max(xs: int list) =
       then hd xs
       else
         ans
-    end
-
+    end 
+  
