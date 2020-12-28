@@ -66,13 +66,44 @@ exception IllegalMove
 (* put your solutions for problem 2 here *)
 fun card_color card = 
   case card of
-       Spades => Black
-     | Clubs => Black
+       (Spades, _) => Black
+     | (Clubs, _) => Black
      | _ => Red
 
 fun card_value card = 
   case card of
-       Ace => 11
+       (_, Ace) => 11
+     | (_, Num i) => i
      | _ => 10
+
+
+fun remove_card(cs, c, e) = 
+  let fun check(cs) =
+        case cs of
+             [] => []
+           | x::cs' => if x = c then cs' else x::check(cs')
+      val res = check(cs)
+  in
+    if res = cs
+    then raise e
+    else res
+  end
+
+fun all_same_color(xs) = 
+  case xs of
+       [] => true
+     | _::[] => true
+     | hd1::(hd2::xs') => card_color(hd1) = card_color(hd2) andalso
+     all_same_color(hd2::xs')
+
+fun sum_cards(xs) = 
+  let fun tail_sum(xs, total) = 
+        case xs of
+             [] => total
+           | x::xs' => tail_sum(xs', card_value(x) + total)
+  in
+    tail_sum(xs, 0)
+  end
+
 
 
