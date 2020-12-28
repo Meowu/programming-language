@@ -106,4 +106,37 @@ fun sum_cards(xs) =
   end
 
 
+fun score(cards, goal) = 
+  let val s = sum_cards(cards)
+      val preliminary = if s > goal then (s - goal) * 3 else goal - s
+  in
+    if all_same_color(cards)
+    then
+      preliminary div 2
+    else
+      preliminary
+  end
+
+fun officiate(cards, moves, goal) =
+  let fun step(cards, moves, helds) =
+        case moves of
+             [] => score(helds, goal)
+           | m::ms' => case m of
+                            Discard c => step(cards, ms', remove_card(helds, c,
+                            IllegalMove))
+                          | Draw => case cards of
+                                         [] => score(helds, goal)
+                                       | c::cs' => 
+                                              let val current_helds = c::helds
+                                                  val sum = sum_cards(current_helds)
+                                              in
+                                                  if (sum > goal) then
+                                                    score(current_helds, goal)
+                                                  else
+                                                    step(cs', ms',
+                                                    current_helds)
+                                              end
+  in
+    step(cards, moves, [])
+  end
 
