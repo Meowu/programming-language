@@ -108,4 +108,44 @@ fun check_pat p =
     repeats(vars)
   end 
 
+(*
+(* Q11 *)
+fun match (v,p) =
+    case (p,v) of
+        (Wildcard, _) => SOME []
+      | (Variable s, v) => SOME [(s, v)]
+      | (UnitP, Unit) => SOME []
+      | (ConstP i', Const i) => if i' = i then SOME [] else NONE
+      | (TupleP ps, Tuple vs) => if List.length ps = List.length vs
+				 then all_answers (match) (ListPair.zip (vs,ps))
+				 else NONE 
+      | (ConstructorP(s1,p'), Constructor(s2,q)) => if s1 = s2 then match (q,p') else NONE 
+      | _ => NONE
 
+* *)
+
+fun match(vs, ps) =
+  case ps of
+       Wildcard => SOME []
+     | Variable s => SOME [(s, vs)]
+     | UnitP => (case vs of
+                     Unit => SOME []
+                   | _ => NONE)
+     | ConstP v => (case vs of
+                        Const(n) => if v = n 
+                                   then SOME []
+                                   else NONE
+                      | _ => NONE)
+     | TupleP ps' => (case vs of
+                          Tuple(vs') => if List.length ps' = List.length vs' 
+                                        then all_answers match (ListPair.zip(vs', ps'))
+                                       else NONE
+                        | _ => NONE)
+     | ConstructorP(s1, p) => (case vs of
+                                   Constructor(s2, v) => if s1 = s2
+                                                        then match(v, p)
+                                                        else NONE
+                                 | _ => NONE)
+
+fun first_match v ps = SOME(first_answer (fn p => match(v, p)) ps) handle
+  NoAnswer => NONE

@@ -43,10 +43,8 @@ val test9c1 = count_some_var ("x", Wildcard) = 0
 val test10 = check_pat (Variable("x")) = true
 val test10b = check_pat (TupleP ([Variable("x"), Variable("B")])) = true
 val test10c = check_pat (TupleP([Variable("x"), Variable("x")])) = false
-(*
 
 val test11 = match (Const(1), UnitP) = NONE
 
 val test12 = first_match Unit [UnitP] = SOME []
-*)
 
